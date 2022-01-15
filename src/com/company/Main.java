@@ -1,4 +1,3 @@
-
 package com.company;
 
 import java.util.Scanner;
@@ -10,15 +9,15 @@ import java.io.IOException;
 
 public class Main {
 
-    private static ArrayList<String> books = new ArrayList<>();
-    private static File logins = new File("userLogins.txt"); //Change to something sensible
+    private static final ArrayList<String> books = new ArrayList<>();
+    private static final File logins = new File("userLogins.txt");
 
     public static void main(String[] args) {
         boolean quit = false;
         CreateFile();
         getLoginDetails();
         while (!quit) {
-            if (anotherBook().equals("n")) {
+            if (nextBook().equals("n")) {
                 quit = true;
             } else {
                 books.add(getBookDetails());
@@ -51,21 +50,26 @@ public class Main {
         return ISBN;
     }
 
-    public static String getLoginDetails() {
-        
-
+    public static void getLoginDetails() {
+        String getUsername = getInput("username? ");
+        String getPassword = getInput("password? ");
+        String userData = getUsername + "," + getPassword;
+        if (!checkLogin(userData)) {
+            registerUser();
+        }
     }
+
 
     public static boolean checkLogin(String userData) {
         boolean registeredUser = false;
         try {
             Scanner myReader = new Scanner(logins);
             while (!registeredUser) {
-                String data = "";
+                String data;
                 try {
                     data = myReader.nextLine();
                 } catch (Exception e) {
-                    return registeredUser;
+                    return false;
                 }
                 if (data.equals(userData)) {
                     registeredUser = true;
@@ -77,7 +81,7 @@ public class Main {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        System.out.println("a");
+        System.out.println("you already have an account");
         return registeredUser;
     }
 
@@ -98,7 +102,7 @@ public class Main {
     }
 
 
-    public static String anotherBook() {
+    public static String nextBook() {
 
         String enterBook;
         do {
@@ -108,7 +112,6 @@ public class Main {
     }
 
     public static void CreateFile() {
-        // write your code here
         try {
             if (logins.createNewFile()) {
                 System.out.println("File created: " + logins.getName());
@@ -127,13 +130,13 @@ public class Main {
         String getPassword = getInput("Please enter your password: ");
         String userData = getUsername + "," + getPassword;
         System.out.println(userData);
-        WriteToFile("\n" + userData);
+        WriteToFile(userData);
     }
 
     public static void WriteToFile(String userData) {
         try {
-            FileWriter myWriter = new FileWriter(logins.getName(), true); //True means append to file contents, False means overwrite
-            myWriter.write(userData + "\n"); // Appends everything in the file
+            FileWriter myWriter = new FileWriter(logins.getName(), true);
+            myWriter.write(userData + "\n");
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
